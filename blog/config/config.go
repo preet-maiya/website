@@ -16,7 +16,7 @@ type Config struct {
 
 func GetConfig() *Config {
 	c := &Config{}
-	c.ResumeFile = "/resume.pdf"
+	c.ResumeFile = "./resume.pdf"
 
 	if _, err := os.Stat(CONFIGFILE); errors.Is(err, os.ErrNotExist) {
 		return c
@@ -29,6 +29,13 @@ func GetConfig() *Config {
 
 	if err = yaml.Unmarshal(configFile, c); err != nil {
 		log.Fatalf("Error unmarshalling: %v", err)
+	}
+
+	// Update with environment variables
+	// TODO: Use viper instead
+	resumeFileEnv := os.Getenv("RESUME_FILE")
+	if resumeFileEnv != "" {
+		c.ResumeFile = resumeFileEnv
 	}
 
 	return c
